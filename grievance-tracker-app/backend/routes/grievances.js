@@ -124,4 +124,21 @@ router.post("/:id/status", wrap(async (req, res) => {
   res.json({ ok: true });
 }));
 
+// MLA staff manually override the AI-suggested priority
+router.put("/:id/priority", wrap(async (req, res) => {
+  const { priority, actor } = req.body;
+  // URGENT stays valid server-side so existing AI-classified records display correctly —
+  // the UI only offers HIGH/MEDIUM/LOW for new manual selections.
+  const allowed = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+  if (!allowed.includes(priority)) return res.status(400).json({ error: "invalid priority" });
+
+  const g = await get("SELECT * FROM grievances WHERE id = ?", [req.params.id]);
+  if (!g) return res.status(404).json({ error: "Grievance not found" });
+
+  await run("UPDATE grievances SET priority = ? WHERE id = ?", [priority, g.id]);
+  await addHistory(g.id, g.status, `Priority manually set to ${priority}`, actor || "MLA Office");
+
+  res.json({ ok: true });
+}));
+
 module.exports = router;
