@@ -383,7 +383,7 @@ function ReviewView({ grievances, departmentContacts, onDone }) {
 
   const pending = grievances
     .filter((g) => g.status === "SUBMITTED")
-    .sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
+    .sort((a, b) => new Date(a.submitted_at) - new Date(b.submitted_at));
 
   function contactsFor(deptName) {
     const dept = departmentContacts.find((d) => d.name === deptName);
@@ -476,6 +476,22 @@ function ReviewView({ grievances, departmentContacts, onDone }) {
                   onChange={(e) => setSelectedDept({ ...selectedDept, [g.id]: e.target.value })}
                 >
                   {departmentContacts.map((d) => <option key={d.id} value={d.name}>{d.name}</option>)}
+                </select>
+
+                <span style={{ fontSize: 12.5, color: "var(--ink-soft)" }}>Priority:</span>
+                <select
+                  className="input"
+                  style={{ width: 130 }}
+                  value={g.priority}
+                  onChange={async (e) => {
+                    await api.updatePriority(g.id, e.target.value, "MLA Office");
+                    onDone();
+                  }}
+                >
+                  {g.priority === "URGENT" && <option value="URGENT">Urgent</option>}
+                  <option value="HIGH">High</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="LOW">Low</option>
                 </select>
 
                 <span style={{ fontSize: 12.5, color: "var(--ink-soft)" }}>Send to:</span>
@@ -1296,7 +1312,7 @@ function ReportsView({ grievances, departmentContacts }) {
           </div>
 
           <h3 style={{ fontSize: 15, marginBottom: 10 }}>Grievances ({sortedRows.length})</h3>
-          <div className="card" style={{ padding: 0, overflow: "auto", maxHeight: 420 }}>
+          <div className="card print-expand" style={{ padding: 0, overflow: "auto", maxHeight: 420 }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
               <thead>
                 <tr style={{ background: "var(--bg)", textAlign: "left" }}>

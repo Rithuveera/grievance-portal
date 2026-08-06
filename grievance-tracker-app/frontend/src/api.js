@@ -29,6 +29,12 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reason, actor })
     }).then(handle),
+  updatePriority: (id, priority, actor) =>
+    fetch(`${BASE}/api/grievances/${id}/priority`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priority, actor })
+    }).then(handle),
   updateStatus: (id, status, note, actor) =>
     fetch(`${BASE}/api/grievances/${id}/status`, {
       method: "POST",
