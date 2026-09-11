@@ -1,4 +1,4 @@
-# குறையுதவி (Kuraiyudhavi) — Grievance Tracker Portal
+# Seyal360 — One platform One Solution
 
 A full application for tracking public grievances from submission (online or Excel batch
 upload from field camps) through MLA review, department resolution, and citizen verification —

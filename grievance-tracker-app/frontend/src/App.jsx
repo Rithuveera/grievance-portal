@@ -110,9 +110,8 @@ export default function App() {
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <aside className="sidebar no-print">
         <div style={{ marginBottom: 26, paddingLeft: 4 }}>
-          <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 700, lineHeight: 1.15 }}>குறையுதவி</div>
-          <div style={{ fontSize: 10.5, color: "#a9b0cc", marginTop: 1 }}>Kuraiyudhavi</div>
-          <div style={{ fontSize: 11, color: "#a9b0cc", marginTop: 2 }}>Grievance Tracker Portal</div>
+          <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 700, lineHeight: 1.15 }}>Seyal360</div>
+          <div style={{ fontSize: 11, color: "#a9b0cc", marginTop: 2 }}>One platform One Solution</div>
         </div>
         <div
           className="navitem"
