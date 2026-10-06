@@ -35,6 +35,8 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ priority, actor })
     }).then(handle),
+  deleteGrievance: (id) =>
+    fetch(`${BASE}/api/grievances/${id}`, { method: "DELETE" }).then(handle),
   updateStatus: (id, status, note, actor) =>
     fetch(`${BASE}/api/grievances/${id}/status`, {
       method: "POST",

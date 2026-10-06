@@ -375,6 +375,8 @@ function ReviewView({ grievances, departmentContacts, onDone }) {
   const [rejectingId, setRejectingId] = useState(null);
   const [rejectReason, setRejectReason] = useState(REJECT_REASONS[0]);
   const [rejectCustom, setRejectCustom] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
 
   useEffect(() => {
     api.getSettings().then((s) => setFooter(s.dept_message_footer || ""));
@@ -449,6 +451,14 @@ function ReviewView({ grievances, departmentContacts, onDone }) {
     onDone();
   }
 
+  async function confirmDelete(g) {
+    setDeleteBusy(true);
+    await api.deleteGrievance(g.id);
+    setDeleteBusy(false);
+    setDeletingId(null);
+    onDone();
+  }
+
   return (
     <div>
       <h1 style={{ fontSize: 24 }}>MLA Review Queue</h1>
@@ -517,7 +527,52 @@ function ReviewView({ grievances, departmentContacts, onDone }) {
                 >
                   <X size={14} /> Reject
                 </button>
+                <button
+                  className="btn btn-outline"
+                  style={{ color: "var(--coral)", borderColor: "var(--coral)" }}
+                  onClick={() => setDeletingId(g.id)}
+                >
+                  <Trash2 size={14} /> Delete
+                </button>
               </div>
+
+              {deletingId === g.id && (
+                <div
+                  style={{
+                    position: "fixed", inset: 0, background: "rgba(28,36,32,0.45)",
+                    display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000
+                  }}
+                  onClick={() => !deleteBusy && setDeletingId(null)}
+                >
+                  <div
+                    className="card"
+                    style={{ maxWidth: 380, width: "90%", background: "#fff", boxShadow: "0 8px 30px rgba(0,0,0,0.25)" }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                      <AlertTriangle size={18} color="var(--coral)" />
+                      <h3 style={{ fontSize: 16 }}>Delete this grievance?</h3>
+                    </div>
+                    <p style={{ fontSize: 13.5, color: "var(--ink-soft)", marginBottom: 16 }}>
+                      <span className="mono">{g.ref}</span> will be permanently removed from the entire
+                      application — this cannot be undone.
+                    </p>
+                    <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                      <button className="btn btn-outline" disabled={deleteBusy} onClick={() => setDeletingId(null)}>
+                        No
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        style={{ background: "var(--coral)" }}
+                        disabled={deleteBusy}
+                        onClick={() => confirmDelete(g)}
+                      >
+                        {deleteBusy ? <Loader2 size={14} className="spin" /> : <Trash2 size={14} />} Yes, Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {rejectingId === g.id && (
                 <div style={{ marginTop: 10, padding: 12, background: "var(--bg)", borderRadius: 8, display: "flex", flexDirection: "column", gap: 8 }}>

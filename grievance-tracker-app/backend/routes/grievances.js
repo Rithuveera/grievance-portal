@@ -141,4 +141,16 @@ router.put("/:id/priority", wrap(async (req, res) => {
   res.json({ ok: true });
 }));
 
+// Permanently delete a grievance (e.g. test entries, duplicates caught too late) —
+// removes it entirely, including its status history. Cannot be undone.
+router.delete("/:id", wrap(async (req, res) => {
+  const g = await get("SELECT * FROM grievances WHERE id = ?", [req.params.id]);
+  if (!g) return res.status(404).json({ error: "Grievance not found" });
+
+  await run("DELETE FROM status_history WHERE grievance_id = ?", [g.id]);
+  await run("DELETE FROM grievances WHERE id = ?", [g.id]);
+
+  res.json({ ok: true });
+}));
+
 module.exports = router;
